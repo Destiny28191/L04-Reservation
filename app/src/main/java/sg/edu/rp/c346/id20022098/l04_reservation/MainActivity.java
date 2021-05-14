@@ -2,7 +2,12 @@ package sg.edu.rp.c346.id20022098.l04_reservation;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.app.TimePickerDialog;
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.Calendar;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -10,6 +15,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     Button reserve;
     Button reset;
     String sa ="";
+    String timeString ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
         smoke = findViewById(R.id.checkBoxSmokingArea);
         reserve = findViewById(R.id.buttonReserve);
         reset = findViewById(R.id.buttonReset);
+
+
+
 
         smoke.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +75,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        tp.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                if(tp.getCurrentHour() >= 12){
+                    timeString = "PM";
+                }else{
+                    timeString = "AM";
+                }
+            }
+        });
 
         reserve.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,8 +93,25 @@ public class MainActivity extends AppCompatActivity {
                 String ln = lnText.getText().toString();
                 String pn = phoneText.getText().toString();
                 String GS = gs.getText().toString();
+                if(TextUtils.isEmpty(fn)) {
+                    Toast.makeText(MainActivity.this, "You have not filled First Name!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(TextUtils.isEmpty(ln)) {
+                    Toast.makeText(MainActivity.this, "You have not filled Last Name!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(TextUtils.isEmpty(pn)) {
+                    Toast.makeText(MainActivity.this, "You have not filled Phone Number!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(TextUtils.isEmpty(GS)) {
+                    Toast.makeText(MainActivity.this, "You have not filled Group Size!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 String message ="Name: " + fn + " " + ln + "\n" + "Phone Number: " + pn + "\n" + "Group Size: " + GS + "\n"
-                        + "Date of Reservation: " + dp.getDayOfMonth() + "/" + dp.getMonth() + "/" + dp.getYear() + "Reservation Time: " + tp.getCurrentHour() + ":" + tp.getCurrentMinute() + "\n";
+                        + "Date of Reservation: " + dp.getDayOfMonth() + "/" + dp.getMonth() + "/" + dp.getYear() + "\n" + "Reservation Time: " + tp.getCurrentHour() + ":" + tp.getCurrentMinute() + timeString + "\n";
                 message += sa;
                 Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
             }
